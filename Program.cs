@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 internal class Program
@@ -101,7 +101,7 @@ class Cashier : Man
 
 class Client : Man
 {
-    private Random _random = new Random();
+    private static Random _random = new Random();
 
     public Client() : base()
     {
