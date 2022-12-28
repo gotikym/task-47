@@ -67,8 +67,8 @@ class SuperMarket
 
 abstract class Man
 {
-    public int Money { get; protected set; }
     protected List<Product> Inventory = new List<Product>();
+    public int Money { get; protected set; }
 
     public Man()
     {
@@ -81,7 +81,7 @@ class Cashier : Man
 {
     public Cashier() : base() { }
 
-    public int Calculate(List<Product> inventory)
+    public int Calculate(IReadOnlyList<Product> inventory)
     {
         int costCount = 0;
 
@@ -102,6 +102,7 @@ class Cashier : Man
 class Client : Man
 {
     private static Random _random = new Random();
+    public IReadOnlyList<Product> Products => Inventory;
 
     public Client() : base()
     {
@@ -111,9 +112,9 @@ class Client : Man
         AddProducts();
     }
 
-    public List<Product> GiveProduct()
+    public IReadOnlyList<Product> GiveProduct()
     {
-        return Inventory;
+        return Products;
     }
 
     public void RemoveProduct()
