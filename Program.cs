@@ -39,8 +39,6 @@ class SuperMarket
 
         FillBasket(client);
 
-        Console.WriteLine("Свободная касса");
-
         while (isSolvent == false)
         {
             costCount = _cashier.Calculate(client.Products);
@@ -64,12 +62,12 @@ class SuperMarket
 
     private void FillBasket(Client client)
     {
-        const string CommandExit = "exit";
+        const string CommandPay = "pay";
         bool isExit = false;
 
         while(isExit == false)
         {
-            Console.WriteLine("Чтобы взять продукт, нажмите любую клавишу, чтобы выйти напишите - " + CommandExit);
+            Console.WriteLine("Чтобы взять продукт, нажмите любую клавишу, чтобы оплатить напишите - " + CommandPay);
             string userChoice = Console.ReadLine();
 
             switch(userChoice)
@@ -77,7 +75,7 @@ class SuperMarket
                 default:
                     client.TakeProduct(ChooseProduct());
                     break;
-                case CommandExit:
+                case CommandPay:
                     isExit = true;
                     break;
             }
