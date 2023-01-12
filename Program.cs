@@ -13,18 +13,22 @@ internal class Program
 
 class SuperMarket
 {
+    private List<Product> _products = new List<Product>();
     private Queue<Client> _clients = new Queue<Client>();
     private Cashier _cashier = new Cashier();
 
+    public SuperMarket()
+    {
+        AddProduct();
+    }
+
     public void Work()
     {
-        AddClient();
+        AddClients();
 
         while(_clients.Count > 0)
         {
-            Console.WriteLine("Свободная касса");
-            Serve(_clients.Peek());
-            _clients.Dequeue();
+            Serve(_clients.Dequeue());
         }
     }
 
@@ -33,14 +37,18 @@ class SuperMarket
         int costCount = 0;
         bool isSolvent = false;
 
+        FillBasket(client);
+
+        Console.WriteLine("Свободная касса");
+
         while (isSolvent == false)
         {
-            costCount = _cashier.Calculate(client.GiveProduct());
+            costCount = _cashier.Calculate(client.Products);
 
             if (client.CanPay(costCount))
             {
                 client.Pay(costCount);
-                _cashier.GetMoney(costCount);
+                _cashier.TakeMoney(costCount);
                 isSolvent = true;
                 Console.WriteLine("Клиент оплатил и ушел в закат");
                 Console.ReadKey();
@@ -54,32 +62,95 @@ class SuperMarket
         }
     }
 
-    private void AddClient()
+    private void FillBasket(Client client)
     {
-        int clientCount = 7;
+        const string CommandExit = "exit";
+        bool isExit = false;
+
+        while(isExit == false)
+        {
+            Console.WriteLine("Чтобы взять продукт, нажмите любую клавишу, чтобы выйти напишите - " + CommandExit);
+            string userChoice = Console.ReadLine();
+
+            switch(userChoice)
+            {
+                default:
+                    client.TakeProduct(ChooseProduct());
+                    break;
+                case CommandExit:
+                    isExit = true;
+                    break;
+            }
+        }
+    }
+
+    public Product ChooseProduct()
+    {
+        Console.WriteLine("Выберите продукт: ");
+        ShowProducts();
+
+        return _products[GetNumber()];
+    }
+
+    private void ShowProducts()
+    {
+        int numberProduct = 0;
+
+        foreach(Product product in _products)
+        {
+            Console.WriteLine(numberProduct + " " + product.Name + ": " + product.Description + " - " + product.Cost + " серебрянных");
+            numberProduct++;
+        }
+    }
+
+    private void AddProduct()
+    {
+        _products.Add(new Product("яблоко", "красное, спелое, вкусное", 50));
+        _products.Add(new Product("мороженое", "Бурёнка, крем-брюле", 40));
+        _products.Add(new Product("какао", "собрано в Мордоре", 70));
+        _products.Add(new Product("мяско", "свежее, не замороженное", 170));
+        _products.Add(new Product("шампанское", "Mondoro Asti", 250));
+        _products.Add(new Product("хлеб", "черный как тьма, невидим ночью", 300));
+    }
+
+    private void AddClients()
+    {
+        int clientCount = 5;
 
         for (int i = 0; i < clientCount; i++)
         {
             _clients.Enqueue(new Client());
         }
     }
-}
 
-abstract class Man
-{
-    protected List<Product> Inventory = new List<Product>();
-    public int Money { get; protected set; }
-
-    public Man()
+    private int GetNumber()
     {
-        Money = 0;
-        Inventory = new List<Product>();
+        bool isParse = false;
+        int numberForReturn = 0;
+
+        while (isParse == false)
+        {
+            string userNumber = Console.ReadLine();
+            isParse = int.TryParse(userNumber, out numberForReturn);
+
+            if (isParse == false)
+            {
+                Console.WriteLine("Вы не корректно ввели число.");
+            }
+        }
+
+        return numberForReturn;
     }
 }
 
-class Cashier : Man
+class Cashier
 {
-    public Cashier() : base() { }
+    public int Money { get; protected set; }
+    
+    public Cashier()
+    {
+        Money = 0;
+    }
 
     public int Calculate(IReadOnlyList<Product> inventory)
     {
@@ -93,28 +164,24 @@ class Cashier : Man
         return costCount;
     }
 
-    public void GetMoney(int money)
+    public void TakeMoney(int money)
     {
         Money += money;
     }
 }
 
-class Client : Man
+class Client
 {
-    private static Random _random = new Random();
     public IReadOnlyList<Product> Products => Inventory;
+    public int Money { get; protected set; }
+    private List<Product> Inventory = new List<Product>();
+    private static Random _random = new Random();
 
     public Client() : base()
     {
         int minMoney = 100;
         int maxMoney = 901;
         Money = _random.Next(minMoney, maxMoney);
-        AddProducts();
-    }
-
-    public IReadOnlyList<Product> GiveProduct()
-    {
-        return Products;
     }
 
     public void RemoveProduct()
@@ -136,14 +203,9 @@ class Client : Man
         return costCount;
     }
 
-    private void AddProducts()
+    public void TakeProduct(Product product)
     {
-        Inventory.Add(new Product("яблоко", "красное, спелое, вкусное", 50));
-        Inventory.Add(new Product("мороженое", "Бурёнка, крем-брюле", 40));
-        Inventory.Add(new Product("какао", "собрано в Мордоре", 70));
-        Inventory.Add(new Product("мяско", "свежее, не замороженное", 170));
-        Inventory.Add(new Product("шампанское", "Mondoro Asti", 250));
-        Inventory.Add(new Product("хлеб", "черный как тьма, невидим ночью", 300));
+        Inventory.Add(product);
     }
 }
 
