@@ -5,28 +5,28 @@ internal class Program
 {
     static void Main(string[] args)
     {
-        SuperMarket superMarket = new SuperMarket();
+        Supermarket supermarket = new Supermarket();
 
-        superMarket.Work();
+        supermarket.Work();
     }
 }
 
-class SuperMarket
+class Supermarket
 {
     private List<Product> _products = new List<Product>();
     private Queue<Client> _clients = new Queue<Client>();
     private Cashier _cashier = new Cashier();
 
-    public SuperMarket()
+    public Supermarket()
     {
-        AddProduct();
+        AddProducts();
     }
 
     public void Work()
     {
         AddClients();
 
-        while(_clients.Count > 0)
+        while (_clients.Count > 0)
         {
             Serve(_clients.Dequeue());
         }
@@ -65,43 +65,50 @@ class SuperMarket
         const string CommandPay = "pay";
         bool isExit = false;
 
-        while(isExit == false)
+        while (isExit == false)
         {
             Console.WriteLine("Чтобы взять продукт, нажмите любую клавишу, чтобы оплатить напишите - " + CommandPay);
             string userChoice = Console.ReadLine();
 
-            switch(userChoice)
+            if (userChoice == CommandPay)
             {
-                default:
-                    client.TakeProduct(ChooseProduct());
-                    break;
-                case CommandPay:
-                    isExit = true;
-                    break;
+                client.TakeProduct(ChooseProduct());
+            }
+            else
+            {
+                isExit = true;
             }
         }
     }
 
-    public Product ChooseProduct()
+    private Product ChooseProduct()
     {
         Console.WriteLine("Выберите продукт: ");
         ShowProducts();
+        int productIndex = GetNumber();
+        int defoltIndex = 0;
 
-        return _products[GetNumber()];
+        if(productIndex >= _products.Count || productIndex < 0)
+        {
+            Console.WriteLine("Нет такого продукта, но думаю вы хотели яблоко.");
+            return _products[defoltIndex];
+        }
+
+        return _products[productIndex];
     }
 
     private void ShowProducts()
     {
         int numberProduct = 0;
 
-        foreach(Product product in _products)
+        foreach (Product product in _products)
         {
             Console.WriteLine(numberProduct + " " + product.Name + ": " + product.Description + " - " + product.Cost + " серебрянных");
             numberProduct++;
         }
     }
 
-    private void AddProduct()
+    private void AddProducts()
     {
         _products.Add(new Product("яблоко", "красное, спелое, вкусное", 50));
         _products.Add(new Product("мороженое", "Бурёнка, крем-брюле", 40));
@@ -144,7 +151,7 @@ class SuperMarket
 class Cashier
 {
     public int Money { get; protected set; }
-    
+
     public Cashier()
     {
         Money = 0;
@@ -170,10 +177,10 @@ class Cashier
 
 class Client
 {
-    public IReadOnlyList<Product> Products => Inventory;
-    public int Money { get; protected set; }
-    private List<Product> Inventory = new List<Product>();
+    private List<Product> _inventory = new List<Product>();
     private static Random _random = new Random();
+    public IReadOnlyList<Product> Products => _inventory;
+    public int Money { get; protected set; }
 
     public Client() : base()
     {
@@ -185,9 +192,9 @@ class Client
     public void RemoveProduct()
     {
         int minProduct = 0;
-        int maxProduct = Inventory.Count;
+        int maxProduct = _inventory.Count;
 
-        Inventory.RemoveAt(_random.Next(minProduct, maxProduct));
+        _inventory.RemoveAt(_random.Next(minProduct, maxProduct));
     }
 
     public bool CanPay(int costCount)
@@ -203,7 +210,7 @@ class Client
 
     public void TakeProduct(Product product)
     {
-        Inventory.Add(product);
+        _inventory.Add(product);
     }
 }
 
