@@ -179,8 +179,8 @@ class Client
 {
     private static Random _random = new Random();
     public IReadOnlyList<Product> Products => _inventory;
-    private List<Product> _inventory = new List<Product>();
     public int Money { get; protected set; }
+    private List<Product> _inventory = new List<Product>();
 
     public Client() : base()
     {
