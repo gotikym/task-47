@@ -177,9 +177,9 @@ class Cashier
 
 class Client
 {
-    private List<Product> _inventory = new List<Product>();
     private static Random _random = new Random();
     public IReadOnlyList<Product> Products => _inventory;
+    private List<Product> _inventory = new List<Product>();
     public int Money { get; protected set; }
 
     public Client() : base()
