@@ -150,7 +150,7 @@ class Supermarket
 
 class Cashier
 {
-    public int Money { get; protected set; }
+    public int Money { get; private set; }
 
     public Cashier()
     {
@@ -177,10 +177,10 @@ class Cashier
 
 class Client
 {
+    public int Money { get; private set; }
+    private List<Product> _inventory = new List<Product>();
     private static Random _random = new Random();
     public IReadOnlyList<Product> Products => _inventory;
-    public int Money { get; protected set; }
-    private List<Product> _inventory = new List<Product>();
 
     public Client() : base()
     {
