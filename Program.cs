@@ -150,12 +150,12 @@ class Supermarket
 
 class Cashier
 {
-    public int Money { get; private set; }
-
     public Cashier()
     {
         Money = 0;
     }
+
+    public int Money { get; private set; }
 
     public int Calculate(IReadOnlyList<Product> inventory)
     {
@@ -177,10 +177,8 @@ class Cashier
 
 class Client
 {
-    public int Money { get; private set; }
     private List<Product> _inventory = new List<Product>();
     private static Random _random = new Random();
-    public IReadOnlyList<Product> Products => _inventory;
 
     public Client() : base()
     {
@@ -188,6 +186,9 @@ class Client
         int maxMoney = 901;
         Money = _random.Next(minMoney, maxMoney);
     }
+
+    public IReadOnlyList<Product> Products => _inventory;
+    public int Money { get; private set; }
 
     public void RemoveProduct()
     {
@@ -216,14 +217,14 @@ class Client
 
 class Product
 {
-    public string Name { get; private set; }
-    public string Description { get; private set; }
-    public int Cost { get; private set; }
-
     public Product(string name, string description, int cost)
     {
         Name = name;
         Description = description;
         Cost = cost;
     }
+
+    public string Name { get; private set; }
+    public string Description { get; private set; }
+    public int Cost { get; private set; }
 }
