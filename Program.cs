@@ -72,11 +72,11 @@ class Supermarket
 
             if (userChoice == CommandPay)
             {
-                client.TakeProduct(ChooseProduct());
-            }
-            else
-            {
                 isExit = true;
+            }
+            else 
+            {
+                client.TakeProduct(ChooseProduct());
             }
         }
     }
